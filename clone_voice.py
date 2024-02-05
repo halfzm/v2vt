@@ -49,6 +49,7 @@ class VoiceClone():
         # print(f"检测到的语种为:{language_predicted}")
         if language_predicted == "zh":
             tts_model = MSTTS()
+            # tts_model = self.zh_base_speaker_tts
             source_se = self.zh_source_se
             language = "Chinese"
         else:

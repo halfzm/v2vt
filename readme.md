@@ -3,8 +3,11 @@
 
 
 ## 效果演示
-![webui](./webui.png)
-还是放个视频吧，这样效果会好一点
+
+<video>
+<source src="res.mp4" type="video/mp4">
+</video>
+
 
 ## 环境搭建
 1. 安装[ffmpeg](https://ffmpeg.org/)并添加到环境变量，或者是直接把相应可执行程序放到当前目录ffmpeg文件夹
@@ -17,7 +20,7 @@ ffmpeg
 
 2. 安装依赖
 ```
-git clone
+git clone git@github.com:halfzm/v2vt.git
 
 conda create -n v2vt_clone python=3.11.0
 conda activate v2vt_clone
@@ -43,7 +46,7 @@ openvoice_checkpoints
 python app.py
 ```
 - 关于输入  
-输入视频不能太短，否则语音克隆的时候报错（最好不要低于8S）
+输入视频不能太短，否则语音克隆的时候报错（最好不要低于5S）
 
 - 关于输出  
 默认是输出到当前目录下的output.mp4，也可以在webui中直接下载
