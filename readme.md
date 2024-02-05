@@ -3,6 +3,7 @@
 
 
 ## 效果演示
+详见`res.mp4`
 
 <video>
 <source src="res.mp4" type="video/mp4">
