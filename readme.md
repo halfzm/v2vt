@@ -5,9 +5,18 @@
 ## 效果演示
 详见`res.mp4`
 
-<video>
+<!-- <video>
 <source src="res.mp4" type="video/mp4">
-</video>
+</video> -->
+
+## 技术栈
+- 语音识别 [fast-whisper](https://github.com/SYSTRAN/faster-whisper)
+- 文本翻译 [facebook/m2m](https://huggingface.co/facebook/m2m100_1.2B)
+- 音色克隆 [openvoice](https://github.com/myshell-ai/OpenVoice)（对于中文，使用微软的[TTS](https://github.com/skygongque/tts)替换openvoice自带的TTS模型）
+- 口型同步：[videotalking](https://github.com/OpenTalker/video-retalking)
+- 脸部超分：[gfpgan](https://github.com/TencentARC/GFPGAN)
+- 视频整合 [pyvideotrans](https://github.com/jianchang512/pyvideotrans)
+
 
 
 ## 环境搭建
@@ -30,12 +39,21 @@ cd v2vt_clone
 pip install -r requirements.txt
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
+
 3. 把openvoice中需要的[模型](https://myshell-public-repo-hosting.s3.amazonaws.com/checkpoints_1226.zip)放到`openvoice_checkpoints`文件夹中，目录结构应该如下
 ```
 openvoice_checkpoints
    |- base_speakers
     |- ...
    |- converter
+    |- ...
+...
+```
+
+1. 把video_retalking中需要的[模型](https://drive.google.com/drive/folders/18rhjMpxK8LVVxf7PI6XwOidt8Vouv_H0?usp=share_link)放到`video-retalking/checkpoints`文件夹中，目录结构应该如下
+```
+video-retalking
+   |- checkpoints
     |- ...
 ...
 ```
@@ -56,14 +74,7 @@ python app.py
 ## TODO
 - [ ] 人声分离：提升whisper输入的音频质量([spleeter](https://github.com/deezer/spleeter))  
 - [ ] 音频降噪：音色克隆后的声音电噪明显  
-- [ ] 口型同步：提升画面的自然度([videoretalking](https://github.com/OpenTalker/video-retalking))  
-
-
-## 参考项目
-- 语音识别 [fast-whisper](https://github.com/SYSTRAN/faster-whisper)
-- 文本翻译 [facebook/m2m](https://huggingface.co/facebook/m2m100_1.2B)
-- 音色克隆 [openvoice](https://github.com/myshell-ai/OpenVoice)（对于中文，使用微软的[TTS](https://github.com/skygongque/tts)替换openvoice自带的TTS模型）
-- 音频整合 [pyvideotrans](https://github.com/jianchang512/pyvideotrans)
+- [x] 口型同步：提升画面的自然度([videoretalking](https://github.com/OpenTalker/video-retalking))  
 
 
 ## 其它

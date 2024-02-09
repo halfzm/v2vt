@@ -1,4 +1,5 @@
 import os
+import subprocess
 import shutil
 import gradio as gr
 
@@ -11,6 +12,7 @@ ffmpeg_path = os.path.join(rootdir, "ffmpeg")
 os.environ["PATH"] = ffmpeg_path + ";" + os.environ["PATH"]
 
 s2st = Speech2SpeechTranslation()
+
 
 def extract_audio_from_video(video_fp):
     os.system(f"ffmpeg -y -i {video_fp} -loglevel error -vn ./tmp/src.wav")
@@ -27,13 +29,34 @@ def embed_subtitle_to_video(sub_fp, video_fp, tgt_fp):
     )
 
 
-def video_to_video_translation(video_fp):
+def video_retalk():
+    base_dir = os.getcwd()
+
+    video_fp = os.path.join(base_dir, "./tmp/novoice_src.mp4")
+    audio_fp = os.path.join(base_dir, "./tmp/tgt.wav")
+    output_fp = os.path.join(base_dir, "./tmp/tgt.mp4")
+    command = f"python inference.py --face {video_fp} --audio {audio_fp} --outfile {output_fp}"
+
+    os.chdir(os.path.join(base_dir, "video-retalking"))
+    if os.path.exists("./temp"):
+        shutil.rmtree("./temp")
+        os.mkdir("./temp")
+        os.mkdir("./temp/temp")
+        os.mkdir("./temp/face")
+    else:
+        os.mkdir("./temp")
+    subprocess.run(command)
+    os.chdir(base_dir)
+
+
+# def video_to_video_translation(video_fp, video_retalking=False:
+def video_to_video_translation(video_fp, video_retalking=True):
     print("extract audio from video...")
     if not os.path.exists("./tmp"):
         os.mkdir("./tmp")
     else:
-        shutil.rmtree('./tmp')
-        os.mkdir('./tmp')
+        shutil.rmtree("./tmp")
+        os.mkdir("./tmp")
 
     extract_audio_from_video(video_fp)
 
@@ -42,21 +65,29 @@ def video_to_video_translation(video_fp):
     sub_fp = "./tmp/sub.srt"
     s2st.speech_to_speech_translation(audio_fp, sub_fp)
 
+    if video_retalking:
+        print("video retalking...")
+        video_retalk()
+
     print("embed audio to video...")
     audio_fp = "./tmp/tgt.wav"
-    video_fp = "./tmp/novoice_src.mp4"
-    tgt_fp = "./tmp/tgt.mp4"
+    if video_retalking:
+        video_fp = "./tmp/tgt_enhanced.mp4"
+    else:
+        video_fp = "./tmp/novoice_src.mp4"
+    tgt_fp = "./tmp/tgt_retalk.mp4"
     embed_audio_to_video(audio_fp, video_fp, tgt_fp)
 
     print("embed subtitle to video...")
-    sub_fp = "./tmp/sub.srt"
-    video_fp = "./tmp/tgt.mp4"
+    sub_fp = "./tmp/sub.srt"    
+    video_fp = "./tmp/tgt_retalk.mp4"
     tgt_fp = "output.mp4"
     embed_subtitle_to_video(sub_fp, video_fp, tgt_fp)
 
     print("finished!")
-    shutil.rmtree("./tmp")
+    # shutil.rmtree("./tmp")
     return tgt_fp
+
 
 def v2vt_app():
     demo = gr.Blocks()
@@ -64,7 +95,7 @@ def v2vt_app():
         gr.Markdown(
             """
             <div style="text-align:center;">
-                <span style="font-size:3em; font-weight:bold;">加成有声音克隆的视频翻译</span>
+                <span style="font-size:3em; font-weight:bold;">带有口型同步的视频翻译</span>
             </div>
             """
         )
