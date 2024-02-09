@@ -50,7 +50,7 @@ openvoice_checkpoints
 ...
 ```
 
-1. 把video_retalking中需要的[模型](https://drive.google.com/drive/folders/18rhjMpxK8LVVxf7PI6XwOidt8Vouv_H0?usp=share_link)放到`video-retalking/checkpoints`文件夹中，目录结构应该如下
+4. 把video_retalking中需要的[模型](https://drive.google.com/drive/folders/18rhjMpxK8LVVxf7PI6XwOidt8Vouv_H0?usp=share_link)放到`video-retalking/checkpoints`文件夹中，目录结构应该如下
 ```
 video-retalking
    |- checkpoints
