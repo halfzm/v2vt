@@ -6,7 +6,7 @@ import srt
 from pydub import AudioSegment
 from pydub.silence import detect_silence
 from faster_whisper import WhisperModel
-from transformers import M2M100ForConditionalGeneration, M2M100Tokenizer
+import translators as ts
 
 from clone_voice import VoiceClone
 from clone_xtts import XTTSClone
@@ -14,21 +14,11 @@ from clone_xtts import XTTSClone
 class Speech2SpeechTranslation:
     def __init__(self, voice_clone_model='xtts'):
         # load from local
-        self.translate_model = M2M100ForConditionalGeneration.from_pretrained(
-            "m2m100_1.2B"
-        )
-        self.translate_tokenizer = M2M100Tokenizer.from_pretrained("m2m100_1.2B")
         self.transcribe_model = WhisperModel(
             "fast-whisper", device="cuda", compute_type="float16"
         )
 
         # load from url
-        # self.translate_model = M2M100ForConditionalGeneration.from_pretrained(
-        #     "facebook/m2m100_1.2B"
-        # )
-        # self.translate_tokenizer = M2M100Tokenizer.from_pretrained(
-        #     "facebook/m2m100_1.2B"
-        # )
         # self.transcribe_model = WhisperModel(
         #     "large-v3", device="cuda", compute_type="float16"
         # )
@@ -52,16 +42,15 @@ class Speech2SpeechTranslation:
         return res, info.language
 
     def translate(self, txt, src_lang="en", tgt_lang="zh"):
-        self.translate_tokenizer.src_lang = src_lang
-        encoded_txt = self.translate_tokenizer(txt, return_tensors="pt")
-        generated_tokens = self.translate_model.generate(
-            **encoded_txt,
-            forced_bos_token_id=self.translate_tokenizer.get_lang_id(tgt_lang),
-        )
-        return self.translate_tokenizer.batch_decode(
-            generated_tokens, skip_special_tokens=True
-        )[0]
+        tgt_text = ''
+        while not tgt_text:
+            try:
+                tgt_text = ts.translate_text(query_text=txt, translator='bing', from_language=src_lang, to_language=tgt_lang)
+            except ts.server.TranslatorError:
+                print('tranlate failed!')
 
+        return tgt_text
+    
     # 拼接配音片段 ,合并后的音频名字为  视频名字.wav 比如 1.mp4.wav
     def _merge_audio_segments(self, segments, start_times, total_duration, mp4name):
         # 创建一个空白的音频段作为初始片段
@@ -94,6 +83,7 @@ class Speech2SpeechTranslation:
 
     # 修改速率
     def _speed_change(self, sound, speed=1.0):
+        print(f'调整音频速率为：{speed}')
         # Manually override the frame_rate. This tells the computer how many
         # samples to play per second
         sound_with_altered_frame_rate = sound._spawn(

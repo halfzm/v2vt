@@ -11,7 +11,9 @@
 
 ## 技术栈
 - 语音识别 [fast-whisper](https://github.com/SYSTRAN/faster-whisper)
-- 文本翻译 [facebook/m2m](https://huggingface.co/facebook/m2m100_1.2B)
+- 文本翻译 
+  - ~~[facebook/m2m](https://huggingface.co/facebook/m2m100_1.2B)~~
+  - [translators](https://github.com/UlionTse/translators)
 - 音色克隆 
   - [openvoice](https://github.com/myshell-ai/OpenVoice)（对于中文，使用微软的[TTS](https://github.com/skygongque/tts)替换openvoice自带的TTS模型）
   - [TTS](https://github.com/coqui-ai/TTS)
