@@ -6,13 +6,15 @@
 详见`res.mp4`
 
 <!-- <video>
-<source src="res.mp4" type="video/mp4">
+<source src="https://github.com/halfzm/v2vt/blob/main/res.mp4" type="video/mp4">
 </video> -->
 
 ## 技术栈
 - 语音识别 [fast-whisper](https://github.com/SYSTRAN/faster-whisper)
 - 文本翻译 [facebook/m2m](https://huggingface.co/facebook/m2m100_1.2B)
-- 音色克隆 [openvoice](https://github.com/myshell-ai/OpenVoice)（对于中文，使用微软的[TTS](https://github.com/skygongque/tts)替换openvoice自带的TTS模型）
+- 音色克隆 
+  - [openvoice](https://github.com/myshell-ai/OpenVoice)（对于中文，使用微软的[TTS](https://github.com/skygongque/tts)替换openvoice自带的TTS模型）
+  - [TTS](https://github.com/coqui-ai/TTS)
 - 口型同步：[videotalking](https://github.com/OpenTalker/video-retalking)
 - 脸部超分：[gfpgan](https://github.com/TencentARC/GFPGAN)
 - 视频整合 [pyvideotrans](https://github.com/jianchang512/pyvideotrans)
@@ -40,7 +42,7 @@ pip install -r requirements.txt
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
 
-3. 把openvoice中需要的[模型](https://myshell-public-repo-hosting.s3.amazonaws.com/checkpoints_1226.zip)放到`openvoice_checkpoints`文件夹中，目录结构应该如下
+3. 把`openvoice`中需要的[模型](https://myshell-public-repo-hosting.s3.amazonaws.com/checkpoints_1226.zip)放到`openvoice_checkpoints`文件夹中，目录结构应该如下[optional]
 ```
 openvoice_checkpoints
    |- base_speakers
@@ -50,7 +52,19 @@ openvoice_checkpoints
 ...
 ```
 
-4. 把video_retalking中需要的[模型](https://drive.google.com/drive/folders/18rhjMpxK8LVVxf7PI6XwOidt8Vouv_H0?usp=share_link)放到`video-retalking/checkpoints`文件夹中，目录结构应该如下
+4. 把`tts`中需要的[模型](https://huggingface.co/coqui/XTTS-v2/tree/main)放到`tts_models`文件夹中，目录结构应该如下
+```
+tts_models
+   |- tts_models--multilingual--multi-dataset--xtts_v2
+    |- config.json
+    |- model.pth
+    |- speakers_xtts.pth
+    |- vocal.json
+   |- ...
+...
+```
+
+5. 把`video_retalking`中需要的[模型](https://drive.google.com/drive/folders/18rhjMpxK8LVVxf7PI6XwOidt8Vouv_H0?usp=share_link)放到`video-retalking/checkpoints`文件夹中，目录结构应该如下
 ```
 video-retalking
    |- checkpoints
@@ -69,12 +83,6 @@ python app.py
 
 - 关于输出  
 默认是输出到当前目录下的output.mp4，也可以在webui中直接下载
-
-
-## TODO
-- [ ] 人声分离：提升whisper输入的音频质量([spleeter](https://github.com/deezer/spleeter))  
-- [ ] 音频降噪：音色克隆后的声音电噪明显  
-- [x] 口型同步：提升画面的自然度([videoretalking](https://github.com/OpenTalker/video-retalking))  
 
 
 ## 其它

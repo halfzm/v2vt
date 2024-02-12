@@ -40,12 +40,12 @@ def video_retalk():
     os.chdir(os.path.join(base_dir, "video-retalking"))
     if os.path.exists("./temp"):
         shutil.rmtree("./temp")
-        os.mkdir("./temp")
-        os.mkdir("./temp/temp")
-        os.mkdir("./temp/face")
-    else:
-        os.mkdir("./temp")
+    os.mkdir("./temp")
+    os.mkdir("./temp/temp")
+    os.mkdir("./temp/face")
+
     subprocess.run(command)
+    
     os.chdir(base_dir)
 
 

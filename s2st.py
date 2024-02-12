@@ -9,29 +9,36 @@ from faster_whisper import WhisperModel
 from transformers import M2M100ForConditionalGeneration, M2M100Tokenizer
 
 from clone_voice import VoiceClone
+from clone_xtts import XTTSClone
 
 class Speech2SpeechTranslation:
-    def __init__(self):
+    def __init__(self, voice_clone_model='xtts'):
         # load from local
-        # self.translate_model = M2M100ForConditionalGeneration.from_pretrained(
-        #     "m2m100_1.2B"
-        # )
-        # self.translate_tokenizer = M2M100Tokenizer.from_pretrained("m2m100_1.2B")
-        # self.transcribe_model = WhisperModel(
-        #     "fast-whisper", device="cuda", compute_type="float16"
-        # )
+        self.translate_model = M2M100ForConditionalGeneration.from_pretrained(
+            "m2m100_1.2B"
+        )
+        self.translate_tokenizer = M2M100Tokenizer.from_pretrained("m2m100_1.2B")
+        self.transcribe_model = WhisperModel(
+            "fast-whisper", device="cuda", compute_type="float16"
+        )
 
         # load from url
-        self.translate_model = M2M100ForConditionalGeneration.from_pretrained(
-            "facebook/m2m100_1.2B"
-        )
-        self.translate_tokenizer = M2M100Tokenizer.from_pretrained(
-            "facebook/m2m100_1.2B"
-        )
-        self.transcribe_model = WhisperModel(
-            "large-v3", device="cuda", compute_type="float16"
-        )
-        self.voice_clone = VoiceClone()
+        # self.translate_model = M2M100ForConditionalGeneration.from_pretrained(
+        #     "facebook/m2m100_1.2B"
+        # )
+        # self.translate_tokenizer = M2M100Tokenizer.from_pretrained(
+        #     "facebook/m2m100_1.2B"
+        # )
+        # self.transcribe_model = WhisperModel(
+        #     "large-v3", device="cuda", compute_type="float16"
+        # )
+
+        if voice_clone_model == 'xtts':
+            self.voice_clone = XTTSClone()
+        elif voice_clone_model == 'openvoice':
+            self.voice_clone = VoiceClone()
+        else:
+            self.voice_clone = XTTSClone()
 
     def transcribe(self, audio_fp):
         res = []

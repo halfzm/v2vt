@@ -13,7 +13,7 @@ snakers
 *.json
 *.mp4
 *.exe
-*.txt
 processed
 pretrained_models
 temp
+tts_models
