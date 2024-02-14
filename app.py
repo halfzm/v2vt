@@ -63,7 +63,7 @@ def video_to_video_translation(video_fp, video_retalking=True):
     print("speech to speech translation...")
     audio_fp = "./tmp/src.wav"
     sub_fp = "./tmp/sub.srt"
-    s2st.speech_to_speech_translation(audio_fp, sub_fp)
+    s2st.speech_to_speech_translation(audio_fp, sub_fp, adjust_audio_speed=True)
 
     if video_retalking:
         print("video retalking...")

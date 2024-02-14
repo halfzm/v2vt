@@ -129,6 +129,7 @@ class Speech2SpeechTranslation:
         self,
         audio_fp,
         sub_fp,
+        adjust_audio_speed=True,
     ):
         normalized_sound, nonsilent_data = self._split_audio(audio_fp)
         total_length = len(normalized_sound) / 1000
@@ -175,7 +176,8 @@ class Speech2SpeechTranslation:
                     # 最大加速2倍
                     speed = mp3len / wavlen
                     speed = 2 if speed > 2 else speed
-                    audio_data = self._speed_change(audio_data, speed)
+                    if adjust_audio_speed:
+                        audio_data = self._speed_change(audio_data, speed)
             except:
                 audio_data = AudioSegment.silent(duration=end_time - start_time)
             segments.append(audio_data)
