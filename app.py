@@ -4,6 +4,7 @@ import shutil
 import gradio as gr
 
 from s2st import Speech2SpeechTranslation
+from utils import timer_decorator
 
 # 当前执行目录
 rootdir = os.getcwd()
@@ -11,9 +12,10 @@ rootdir = os.getcwd()
 ffmpeg_path = os.path.join(rootdir, "ffmpeg")
 os.environ["PATH"] = ffmpeg_path + ";" + os.environ["PATH"]
 
-s2st = Speech2SpeechTranslation()
+s2st = Speech2SpeechTranslation(voice_clone_model="xtts", use_m2m_as_translator=False)
 
 
+@timer_decorator
 def extract_audio_from_video(video_fp):
     os.system(f"ffmpeg -y -i {video_fp} -loglevel error -vn ./tmp/src.wav")
     os.system(f"ffmpeg -y -i {video_fp} -loglevel error -an ./tmp/novoice_src.mp4")
@@ -29,6 +31,7 @@ def embed_subtitle_to_video(sub_fp, video_fp, tgt_fp):
     )
 
 
+@timer_decorator
 def video_retalk():
     base_dir = os.getcwd()
 
@@ -45,11 +48,11 @@ def video_retalk():
     os.mkdir("./temp/face")
 
     subprocess.run(command)
-    
+
     os.chdir(base_dir)
 
 
-# def video_to_video_translation(video_fp, video_retalking=False:
+@timer_decorator
 def video_to_video_translation(video_fp, video_retalking=True):
     print("extract audio from video...")
     if not os.path.exists("./tmp"):
@@ -79,7 +82,7 @@ def video_to_video_translation(video_fp, video_retalking=True):
     embed_audio_to_video(audio_fp, video_fp, tgt_fp)
 
     print("embed subtitle to video...")
-    sub_fp = "./tmp/sub.srt"    
+    sub_fp = "./tmp/sub.srt"
     video_fp = "./tmp/tgt_retalk.mp4"
     tgt_fp = "output.mp4"
     embed_subtitle_to_video(sub_fp, video_fp, tgt_fp)

@@ -21,13 +21,13 @@ you can see it at `res.mp4`.
 ## Tech Route
 - Speech Recognition: [fast-whisper](https://github.com/SYSTRAN/faster-whisper)
 - Text Translation: 
-  - ~~[facebook/m2m](https://huggingface.co/facebook/m2m100_1.2B)~~
-  - [translators](https://github.com/UlionTse/translators)
+  - [facebook/m2m](https://huggingface.co/facebook/m2m100_1.2B)
+  - [translators](https://github.com/UlionTse/translators)[default]
 - Voice Clone: 
-  - [openvoice](https://github.com/myshell-ai/OpenVoice)（对于中文，使用微软的[TTS](https://github.com/skygongque/tts)替换openvoice自带的TTS模型）
-  - [TTS](https://github.com/coqui-ai/TTS)
-- Lip Synchronization：[videotalking](https://github.com/OpenTalker/video-retalking)
-- Face Restore：[gfpgan](https://github.com/TencentARC/GFPGAN)
+  - [openvoice](https://github.com/myshell-ai/OpenVoice)（For Chinese, we replace the default TTS model of openvoice by MicroSoft's [TTS](https://github.com/skygongque/tts) api）
+  - [TTS](https://github.com/coqui-ai/TTS)[default]
+- Lip Synchronization: [videotalking](https://github.com/OpenTalker/video-retalking)
+- Face Restore: [gfpgan](https://github.com/TencentARC/GFPGAN)
 - Viceo Combine: [pyvideotrans](https://github.com/jianchang512/pyvideotrans)
 
 

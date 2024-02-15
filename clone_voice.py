@@ -4,6 +4,7 @@ import langid
 import OpenVoice.se_extractor as se_extractor
 from OpenVoice.api import BaseSpeakerTTS, ToneColorConverter
 from microsoft_tts import MSTTS
+from utils import timer_decorator
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -36,6 +37,7 @@ class VoiceClone():
             device
         )
 
+    @timer_decorator
     def clone_voice(
         self,
         prompt,

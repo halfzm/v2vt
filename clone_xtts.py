@@ -1,27 +1,22 @@
 import os
-import subprocess
+import re
 import uuid
 import time
+import subprocess
+
+import langid
 import torch
 import torchaudio
-
-# langid is used to detect language for longer text
-# Most users expect text to be their own language, there is checkbox to disable it
-import langid
-import re
 import gradio as gr
 from TTS.tts.configs.xtts_config import XttsConfig
 from TTS.tts.models.xtts import Xtts
-# from TTS.utils.generic_utils import get_user_data_dir
 
+from utils import timer_decorator
 
 class XTTSClone:
     def __init__(self):
         print('loading xtts model...')
         model_name = "tts_models/multilingual/multi-dataset/xtts_v2"
-        # model_path = os.path.join(
-        #     get_user_data_dir("tts"), model_name.replace("/", "--")
-        # )
         model_path = os.path.join(
             'tts_models', model_name.replace("/", "--")
         )
@@ -43,6 +38,7 @@ class XTTSClone:
 
         self.supported_languages = config.languages
 
+    @timer_decorator
     def clone_voice(
         self,
         prompt,
@@ -54,18 +50,17 @@ class XTTSClone:
         language_predicted = langid.classify(prompt)[
             0
         ].strip()  # strip need as there is space at end!
-        # 模型不支持语言
-        if language_predicted not in self.supported_languages:
-            gr.Warning(
-                f"Language you put {language_predicted} in is not in is not in our Supported Languages, please choose from dropdown"
-            )
-
-            return
-
+        
         # tts expects chinese as zh-cn
         if language_predicted == "zh":
             # we use zh-cn
             language_predicted = "zh-cn"
+
+        # 模型不支持语言
+        if language_predicted not in self.supported_languages:
+            print(f"Language you put {language_predicted} in is not in is not in our Supported Languages, please choose from dropdown")
+
+            return
 
         speaker_wav = tgt_audio_fp
 
@@ -169,6 +164,6 @@ class XTTSClone:
 
 if __name__ == "__main__":
     cloner = XTTSClone()
-    prompt = "I have been practicing for two and a half years as a personal practitioner, Zhao Xu Qing, who loves singing, dancing, rap, basketball"
+    prompt = "大家好，今天的演讲主题是关于某一个人"
     tgt_audio_fp = './tmp/src.wav'
-    cloner.predict(prompt, tgt_audio_fp)
+    cloner.clone_voice(prompt, tgt_audio_fp)

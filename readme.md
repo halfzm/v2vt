@@ -20,16 +20,16 @@
 </video> -->
 
 ## 技术栈
-- 语音识别 [fast-whisper](https://github.com/SYSTRAN/faster-whisper)
-- 文本翻译 
-  - ~~[facebook/m2m](https://huggingface.co/facebook/m2m100_1.2B)~~
-  - [translators](https://github.com/UlionTse/translators)
-- 音色克隆 
+- 语音识别：[fast-whisper](https://github.com/SYSTRAN/faster-whisper)
+- 文本翻译： 
+  - [facebook/m2m](https://huggingface.co/facebook/m2m100_1.2B)
+  - [translators](https://github.com/UlionTse/translators)[默认值]
+- 音色克隆： 
   - [openvoice](https://github.com/myshell-ai/OpenVoice)（对于中文，使用微软的[TTS](https://github.com/skygongque/tts)替换openvoice自带的TTS模型）
-  - [TTS](https://github.com/coqui-ai/TTS)
+  - [TTS](https://github.com/coqui-ai/TTS)[默认值]
 - 口型同步：[videotalking](https://github.com/OpenTalker/video-retalking)
 - 脸部超分：[gfpgan](https://github.com/TencentARC/GFPGAN)
-- 视频整合 [pyvideotrans](https://github.com/jianchang512/pyvideotrans)
+- 视频整合：[pyvideotrans](https://github.com/jianchang512/pyvideotrans)
 
 
 
