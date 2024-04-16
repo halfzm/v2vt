@@ -3,11 +3,11 @@ import json
 from datetime import timedelta
 
 import srt
+import translators as ts
 from pydub import AudioSegment
 from pydub.silence import detect_silence
 from faster_whisper import WhisperModel
 from transformers import M2M100ForConditionalGeneration, M2M100Tokenizer
-import translators as ts
 
 from clone_voice import VoiceClone
 from clone_xtts import XTTSClone
@@ -61,7 +61,7 @@ class Speech2SpeechTranslation:
         res = "".join(res)
         return res, info.language
 
-    def translate(self, txt, src_lang="en", tgt_lang="zh"):
+    def translate(self, txt, src_lang="en", tgt_lang="zh", translator_server='bing'):
         if self.use_m2m_as_translator:
             self.translate_tokenizer.src_lang = src_lang
             encoded_txt = self.translate_tokenizer(txt, return_tensors="pt")
@@ -76,8 +76,8 @@ class Speech2SpeechTranslation:
             tgt_text = ''
             while not tgt_text:
                 try:
-                    tgt_text = ts.translate_text(query_text=txt, translator='bing', from_language=src_lang, to_language=tgt_lang)
-                except ts.server.TranslatorError:
+                    tgt_text = ts.translate_text(query_text=txt, translator=translator_server, from_language=src_lang, to_language=tgt_lang)
+                except Exception as e:
                     print('tranlate failed!')
 
             return tgt_text
@@ -161,7 +161,11 @@ class Speech2SpeechTranslation:
         self,
         audio_fp,
         sub_fp,
+        src_lang='zh',
+        tgt_lang='en',
+        translator_server='bing',
         adjust_audio_speed=True,
+        speed=1.0,
     ):
         normalized_sound, nonsilent_data = self._split_audio(audio_fp)
         total_length = len(normalized_sound) / 1000
@@ -179,10 +183,12 @@ class Speech2SpeechTranslation:
 
             # recognize the chunk
             src_txt, language = self.transcribe(chunk_filename)
-            if language == "zh":
-                tgt_txt = self.translate(src_txt, src_lang="zh", tgt_lang="en")
-            elif language == "en":
-                tgt_txt = self.translate(src_txt, src_lang="en", tgt_lang="zh")
+            tgt_txt = self.translate(
+                src_txt,
+                src_lang=src_lang,
+                tgt_lang=tgt_lang,
+                translator_server=translator_server,
+            )
 
             # process the subtitle
             combo_txt = tgt_txt + "\n\n"
@@ -196,7 +202,7 @@ class Speech2SpeechTranslation:
 
             tmpname = f"./tmp/{start_time}-{index}.mp3"
             self.voice_clone.clone_voice(
-                prompt=tgt_txt, tgt_audio_fp=audio_fp, out_audio_fp=tmpname
+                prompt=tgt_txt, tgt_audio_fp=audio_fp, out_audio_fp=tmpname, speed=speed,
             )
 
             # adapt the voice speed
@@ -210,7 +216,7 @@ class Speech2SpeechTranslation:
                     speed = 2 if speed > 2 else speed
                     if adjust_audio_speed:
                         audio_data = self._speed_change(audio_data, speed)
-            except:
+            except Exception as e:
                 audio_data = AudioSegment.silent(duration=end_time - start_time)
             segments.append(audio_data)
             os.unlink(tmpname)

@@ -1,10 +1,11 @@
 import os
-import subprocess
 import shutil
+import subprocess
+
 import gradio as gr
 
-from s2st import Speech2SpeechTranslation
 from utils import timer_decorator
+from s2st import Speech2SpeechTranslation
 
 # 当前执行目录
 rootdir = os.getcwd()
@@ -53,7 +54,7 @@ def video_retalk():
 
 
 @timer_decorator
-def video_to_video_translation(video_fp, video_retalking=True):
+def video_to_video_translation(video_fp, translator_server='bing', src_lang='zh', tgt_lang='en', speed=1.0, lip=False):
     print("extract audio from video...")
     if not os.path.exists("./tmp"):
         os.mkdir("./tmp")
@@ -66,15 +67,15 @@ def video_to_video_translation(video_fp, video_retalking=True):
     print("speech to speech translation...")
     audio_fp = "./tmp/src.wav"
     sub_fp = "./tmp/sub.srt"
-    s2st.speech_to_speech_translation(audio_fp, sub_fp, adjust_audio_speed=True)
+    s2st.speech_to_speech_translation(audio_fp, sub_fp, src_lang=src_lang, tgt_lang=tgt_lang, translator_server=translator_server, adjust_audio_speed=True, speed=float(speed))
 
-    if video_retalking:
+    if "是" in lip:
         print("video retalking...")
         video_retalk()
 
     print("embed audio to video...")
     audio_fp = "./tmp/tgt.wav"
-    if video_retalking:
+    if "是" in lip:
         video_fp = "./tmp/tgt_enhanced.mp4"
     else:
         video_fp = "./tmp/novoice_src.mp4"
@@ -114,16 +115,35 @@ def v2vt_app():
             """
         )
         with gr.Row():
+            translator_server = gr.Dropdown(
+                choices=[
+                    "bing", 
+                ], value='bing', label='翻译引擎'
+            )
+            src_lang = gr.Dropdown(choices=["zh", "en"], value='zh', label="源语言")
+            tgt_lang = gr.Dropdown(choices=["zh", "en"], value='en', label="目标语言")
+        with gr.Row():
+            speed = gr.Textbox(
+                label="音频速度调整",
+                value="1.0",
+                info="加快则填写大于1的值，减慢则填写小于1的值",
+            )
+            lip = gr.CheckboxGroup(
+                choices=["是", "否"],
+                label="口型同步",
+                info="勾选'是'后，视频中的口型会与翻译后的文本对齐，但是耗时会大幅度增加",
+            )
+        with gr.Row():
             input_video = gr.Video(label="输入视频")
             output_video = gr.Video(label="输出视频")
         submit = gr.Button(value="开始转换")
         submit.click(
             fn=video_to_video_translation,
-            inputs=[input_video],
+            inputs=[input_video, translator_server, src_lang, tgt_lang, speed, lip],
             outputs=[output_video],
         )
 
-    demo.launch()
+    demo.launch(inbrowser=True)
 
 
 if __name__ == "__main__":

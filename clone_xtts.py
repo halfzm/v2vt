@@ -8,8 +8,8 @@ import langid
 import torch
 import torchaudio
 import gradio as gr
-from TTS.tts.configs.xtts_config import XttsConfig
 from TTS.tts.models.xtts import Xtts
+from TTS.tts.configs.xtts_config import XttsConfig
 
 from utils import timer_decorator
 
@@ -45,6 +45,7 @@ class XTTSClone:
         tgt_audio_fp,
         out_audio_fp='./tmp/tgt.wav',
         voice_cleanup=False,
+        speed=1.0,
     ):
 
         language_predicted = langid.classify(prompt)[
@@ -149,6 +150,7 @@ class XTTSClone:
             speaker_embedding,
             repetition_penalty=5.0,
             temperature=0.75,
+            speed=speed,
         )
         inference_time = time.time() - t0
         print(f"I: Time to generate audio: {round(inference_time*1000)} milliseconds")
